@@ -1,0 +1,2 @@
+- So far capable of running on CPU slowly and get results (tested 25 epochs so far)
+- To add more data, download the data with .PCD data in it, and add it to trainingdata/

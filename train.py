@@ -7,7 +7,7 @@ tf.disable_v2_behavior()
 import socket
 import importlib
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 import sys
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(BASE_DIR)
@@ -17,7 +17,7 @@ import provider
 import tf_util
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--gpu', type=int, default=-1, help='GPU to use [default: GPU 0]')
+parser.add_argument('--gpu', type=int, default=0, help='GPU to use [default: GPU 0]')
 parser.add_argument('--model', default='pointnet_cls', help='Model name: pointnet_cls or pointnet_cls_basic [default: pointnet_cls]')
 parser.add_argument('--log_dir', default='log', help='Log dir [default: log]')
 parser.add_argument('--num_point', type=int, default=1024, help='Point Number [256/512/1024/2048] [default: 1024]')
@@ -28,6 +28,8 @@ parser.add_argument('--momentum', type=float, default=0.9, help='Initial learnin
 parser.add_argument('--optimizer', default='adam', help='adam or momentum [default: adam]')
 parser.add_argument('--decay_step', type=int, default=200000, help='Decay step for lr decay [default: 200000]')
 parser.add_argument('--decay_rate', type=float, default=0.7, help='Decay rate for lr decay [default: 0.8]')
+parser.add_argument('--num_classes', type=int, default=2, help='Number of classes [default: 2]')
+parser.add_argument('--data_dir', default='data/dataset', help='Data directory [default: data/dataset]')
 FLAGS = parser.parse_args()
 
 
@@ -46,12 +48,13 @@ MODEL_FILE = os.path.join(BASE_DIR, 'models', FLAGS.model+'.py')
 LOG_DIR = FLAGS.log_dir
 if not os.path.exists(LOG_DIR): os.mkdir(LOG_DIR)
 os.system('cp %s %s' % (MODEL_FILE, LOG_DIR)) # bkp of model def
-os.system('cp banana_train.py %s' % (LOG_DIR)) # bkp of train procedure
+os.system('cp multi_class_train.py %s' % (LOG_DIR)) # bkp of train procedure
 LOG_FOUT = open(os.path.join(LOG_DIR, 'log_train.txt'), 'w')
 LOG_FOUT.write(str(FLAGS)+'\n')
 
 MAX_NUM_POINT = 2048
-NUM_CLASSES = 1  # Just banana class
+# Use the provided number of classes instead of hardcoding to 1
+NUM_CLASSES = FLAGS.num_classes  # Modified for multiple classes
 
 BN_INIT_DECAY = 0.5
 BN_DECAY_DECAY_RATE = 0.5
@@ -60,11 +63,15 @@ BN_DECAY_CLIP = 0.99
 
 HOSTNAME = socket.gethostname()
 
-# Banana dataset file paths
-TRAIN_FILES = provider.getDataFiles(
-    os.path.join(BASE_DIR, 'data/banana_dataset/train_files.txt'))
-TEST_FILES = provider.getDataFiles(
-    os.path.join(BASE_DIR, 'data/banana_dataset/test_files.txt'))
+# Dataset file paths - use the provided data directory
+DATA_DIR = FLAGS.data_dir
+TRAIN_FILES = provider.getDataFiles(os.path.join(BASE_DIR, DATA_DIR, 'train_files.txt'))
+TEST_FILES = provider.getDataFiles(os.path.join(BASE_DIR, DATA_DIR, 'test_files.txt'))
+
+# Print dataset info
+print(f"Number of classes: {NUM_CLASSES}")
+print(f"Training files: {TRAIN_FILES}")
+print(f"Testing files: {TEST_FILES}")
 
 def log_string(out_str):
     LOG_FOUT.write(out_str+'\n')
@@ -94,7 +101,8 @@ def get_bn_decay(batch):
 
 def train():
     with tf.Graph().as_default():
-        with tf.device('/cpu:0'+str(GPU_INDEX)):
+        #with tf.device('/gpu:'+str(GPU_INDEX)):
+        with tf.device('/gpu:'+str(GPU_INDEX) if GPU_INDEX >= 0 else '/cpu:0'):
             pointclouds_pl, labels_pl = MODEL.placeholder_inputs(BATCH_SIZE, NUM_POINT)
             is_training_pl = tf.placeholder(tf.bool, shape=())
             print(is_training_pl)
@@ -106,10 +114,9 @@ def train():
             tf.summary.scalar('bn_decay', bn_decay)
 
             # Get model and loss 
-            pred, end_points = MODEL.get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)
-            
-            # Modify the model to handle single class
+            # Set NUM_CLASSES before getting model
             MODEL.NUM_CLASSES = NUM_CLASSES
+            pred, end_points = MODEL.get_model(pointclouds_pl, is_training_pl, bn_decay=bn_decay)
             
             loss = MODEL.get_loss(pred, labels_pl, end_points)
             tf.summary.scalar('loss', loss)
@@ -168,6 +175,9 @@ def train():
                 save_path = saver.save(sess, os.path.join(LOG_DIR, "model.ckpt"))
                 log_string("Model saved in file: %s" % save_path)
 
+        # Save final model
+        save_path = saver.save(sess, os.path.join(LOG_DIR, "model.ckpt"))
+        log_string("Final model saved in file: %s" % save_path)
 
 
 def train_one_epoch(sess, ops, train_writer):
@@ -177,6 +187,10 @@ def train_one_epoch(sess, ops, train_writer):
     # Shuffle train files
     train_file_idxs = np.arange(0, len(TRAIN_FILES))
     np.random.shuffle(train_file_idxs)
+    
+    # Class-wise stats tracking
+    total_correct_class = [0 for _ in range(NUM_CLASSES)]
+    total_seen_class = [0 for _ in range(NUM_CLASSES)]
     
     for fn in range(len(TRAIN_FILES)):
         log_string('----' + str(fn) + '-----')
@@ -210,9 +224,24 @@ def train_one_epoch(sess, ops, train_writer):
             total_correct += correct
             total_seen += BATCH_SIZE
             loss_sum += loss_val
+            
+            # Update class-wise stats
+            for i in range(start_idx, end_idx):
+                l = current_label[i]
+                if i-start_idx < len(pred_val):  # Make sure we're in bounds
+                    total_seen_class[l] += 1
+                    total_correct_class[l] += (pred_val[i-start_idx] == l)
         
         log_string('mean loss: %f' % (loss_sum / float(num_batches)))
         log_string('accuracy: %f' % (total_correct / float(total_seen)))
+        
+        # Print class-wise accuracy
+        log_string('Train class-wise accuracy:')
+        for i in range(NUM_CLASSES):
+            if total_seen_class[i] > 0:
+                accuracy = total_correct_class[i]/float(total_seen_class[i])
+                log_string('Class %d: %f (%d/%d)' % (
+                    i, accuracy, total_correct_class[i], total_seen_class[i]))
 
         
 def eval_one_epoch(sess, ops, test_writer):
@@ -249,14 +278,24 @@ def eval_one_epoch(sess, ops, test_writer):
             loss_sum += (loss_val*BATCH_SIZE)
             for i in range(start_idx, end_idx):
                 l = current_label[i]
-                total_seen_class[l] += 1
-                total_correct_class[l] += (pred_val[i-start_idx] == l)
+                if i-start_idx < len(pred_val):  # Make sure we're in bounds
+                    total_seen_class[l] += 1
+                    total_correct_class[l] += (pred_val[i-start_idx] == l)
             
     log_string('eval mean loss: %f' % (loss_sum / float(total_seen)))
     log_string('eval accuracy: %f'% (total_correct / float(total_seen)))
-    log_string('eval avg class acc: %f' % (np.mean(np.array(total_correct_class)/np.array(total_seen_class,dtype=np.float64))))
+    
+    # Print class-wise evaluation metrics
+    for i in range(NUM_CLASSES):
+        if total_seen_class[i] > 0:
+            log_string('eval class %d accuracy: %f (%d/%d)' % (
+                i, total_correct_class[i]/float(total_seen_class[i]), 
+                total_correct_class[i], total_seen_class[i]))
+    
+    log_string('eval avg class acc: %f' % (
+        np.mean([total_correct_class[i]/float(total_seen_class[i]) 
+                 for i in range(NUM_CLASSES) if total_seen_class[i] > 0])))
          
-
 
 if __name__ == "__main__":
     train()

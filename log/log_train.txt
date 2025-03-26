@@ -1,0 +1,264 @@
+Namespace(gpu=0, model='pointnet_cls', log_dir='log', num_point=1024, max_epoch=20, batch_size=32, learning_rate=0.001, momentum=0.9, optimizer='adam', decay_step=200000, decay_rate=0.7, num_classes=2, data_dir='data/dataset')
+**** EPOCH 000 ****
+----0-----
+mean loss: 0.952122
+accuracy: 0.902699
+Train class-wise accuracy:
+Class 0: 0.901823 (643/713)
+Class 1: 0.903597 (628/695)
+----0-----
+eval mean loss: 3.300015
+eval accuracy: 0.614347
+eval class 0 accuracy: 0.252066 (183/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.626033
+Model saved in file: log/model.ckpt
+**** EPOCH 001 ****
+----0-----
+mean loss: 0.237380
+accuracy: 0.987216
+Train class-wise accuracy:
+Class 0: 0.985975 (703/713)
+Class 1: 0.988489 (687/695)
+----0-----
+eval mean loss: 2.093375
+eval accuracy: 0.715199
+eval class 0 accuracy: 0.447658 (325/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.723829
+**** EPOCH 002 ****
+----0-----
+mean loss: 0.249357
+accuracy: 0.983665
+Train class-wise accuracy:
+Class 0: 0.981767 (700/713)
+Class 1: 0.985612 (685/695)
+----0-----
+eval mean loss: 3.282964
+eval accuracy: 0.659801
+eval class 0 accuracy: 0.340220 (247/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.670110
+**** EPOCH 003 ****
+----0-----
+mean loss: 0.102347
+accuracy: 0.995028
+Train class-wise accuracy:
+Class 0: 0.998597 (712/713)
+Class 1: 0.991367 (689/695)
+----0-----
+eval mean loss: 1.616345
+eval accuracy: 0.705256
+eval class 0 accuracy: 0.428375 (311/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.714187
+**** EPOCH 004 ****
+----0-----
+mean loss: 0.143113
+accuracy: 0.982955
+Train class-wise accuracy:
+Class 0: 0.981716 (698/711)
+Class 1: 0.984218 (686/697)
+----0-----
+eval mean loss: 1.207152
+eval accuracy: 0.799006
+eval class 0 accuracy: 0.610193 (443/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.805096
+**** EPOCH 005 ****
+----0-----
+mean loss: 0.090597
+accuracy: 0.992188
+Train class-wise accuracy:
+Class 0: 0.992938 (703/708)
+Class 1: 0.991429 (694/700)
+----0-----
+eval mean loss: 3.092674
+eval accuracy: 0.534801
+eval class 0 accuracy: 0.353994 (257/726)
+eval class 1 accuracy: 0.727273 (496/682)
+eval avg class acc: 0.540634
+**** EPOCH 006 ****
+----0-----
+mean loss: 0.059742
+accuracy: 0.993608
+Train class-wise accuracy:
+Class 0: 0.991620 (710/716)
+Class 1: 0.995665 (689/692)
+----0-----
+eval mean loss: 1.041111
+eval accuracy: 0.789062
+eval class 0 accuracy: 0.590909 (429/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.795455
+**** EPOCH 007 ****
+----0-----
+mean loss: 0.038858
+accuracy: 0.995028
+Train class-wise accuracy:
+Class 0: 0.994382 (708/712)
+Class 1: 0.995690 (693/696)
+----0-----
+eval mean loss: 0.845419
+eval accuracy: 0.850142
+eval class 0 accuracy: 0.709366 (515/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.854683
+**** EPOCH 008 ****
+----0-----
+mean loss: 0.064113
+accuracy: 0.989347
+Train class-wise accuracy:
+Class 0: 0.991597 (708/714)
+Class 1: 0.987032 (685/694)
+----0-----
+eval mean loss: 1.033168
+eval accuracy: 0.713068
+eval class 0 accuracy: 0.443526 (322/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.721763
+**** EPOCH 009 ****
+----0-----
+mean loss: 0.054637
+accuracy: 0.990057
+Train class-wise accuracy:
+Class 0: 0.991537 (703/709)
+Class 1: 0.988555 (691/699)
+----0-----
+eval mean loss: 2.156501
+eval accuracy: 0.634233
+eval class 0 accuracy: 0.290634 (211/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.645317
+**** EPOCH 010 ****
+----0-----
+mean loss: 0.037803
+accuracy: 0.992898
+Train class-wise accuracy:
+Class 0: 0.991585 (707/713)
+Class 1: 0.994245 (691/695)
+----0-----
+eval mean loss: 1.023406
+eval accuracy: 0.841619
+eval class 0 accuracy: 0.692837 (503/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.846419
+Model saved in file: log/model.ckpt
+**** EPOCH 011 ****
+----0-----
+mean loss: 0.042564
+accuracy: 0.994318
+Train class-wise accuracy:
+Class 0: 0.995787 (709/712)
+Class 1: 0.992816 (691/696)
+----0-----
+eval mean loss: 1.974946
+eval accuracy: 0.618608
+eval class 0 accuracy: 0.260331 (189/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.630165
+**** EPOCH 012 ****
+----0-----
+mean loss: 0.041037
+accuracy: 0.992898
+Train class-wise accuracy:
+Class 0: 0.993017 (711/716)
+Class 1: 0.992775 (687/692)
+----0-----
+eval mean loss: 1.299758
+eval accuracy: 0.666903
+eval class 0 accuracy: 0.353994 (257/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.676997
+**** EPOCH 013 ****
+----0-----
+mean loss: 0.114006
+accuracy: 0.976562
+Train class-wise accuracy:
+Class 0: 0.978962 (698/713)
+Class 1: 0.974101 (677/695)
+----0-----
+eval mean loss: 0.857920
+eval accuracy: 0.840199
+eval class 0 accuracy: 0.690083 (501/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.845041
+**** EPOCH 014 ****
+----0-----
+mean loss: 0.031508
+accuracy: 0.992188
+Train class-wise accuracy:
+Class 0: 0.988717 (701/709)
+Class 1: 0.995708 (696/699)
+----0-----
+eval mean loss: 1.977772
+eval accuracy: 0.679688
+eval class 0 accuracy: 0.378788 (275/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.689394
+**** EPOCH 015 ****
+----0-----
+mean loss: 0.023787
+accuracy: 0.996449
+Train class-wise accuracy:
+Class 0: 0.995787 (709/712)
+Class 1: 0.997126 (694/696)
+----0-----
+eval mean loss: 0.865954
+eval accuracy: 0.772727
+eval class 0 accuracy: 0.559229 (406/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.779614
+**** EPOCH 016 ****
+----0-----
+mean loss: 0.011860
+accuracy: 0.998580
+Train class-wise accuracy:
+Class 0: 0.998599 (713/714)
+Class 1: 0.998559 (693/694)
+----0-----
+eval mean loss: 1.127031
+eval accuracy: 0.697443
+eval class 0 accuracy: 0.413223 (300/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.706612
+**** EPOCH 017 ****
+----0-----
+mean loss: 0.005188
+accuracy: 0.998580
+Train class-wise accuracy:
+Class 0: 0.997183 (708/710)
+Class 1: 1.000000 (698/698)
+----0-----
+eval mean loss: 0.358573
+eval accuracy: 0.913352
+eval class 0 accuracy: 0.831956 (604/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.915978
+**** EPOCH 018 ****
+----0-----
+mean loss: 0.014020
+accuracy: 0.996449
+Train class-wise accuracy:
+Class 0: 0.995757 (704/707)
+Class 1: 0.997147 (699/701)
+----0-----
+eval mean loss: 0.731803
+eval accuracy: 0.800426
+eval class 0 accuracy: 0.612948 (445/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.806474
+**** EPOCH 019 ****
+----0-----
+mean loss: 0.002634
+accuracy: 1.000000
+Train class-wise accuracy:
+Class 0: 1.000000 (713/713)
+Class 1: 1.000000 (695/695)
+----0-----
+eval mean loss: 0.501079
+eval accuracy: 0.887074
+eval class 0 accuracy: 0.780992 (567/726)
+eval class 1 accuracy: 1.000000 (682/682)
+eval avg class acc: 0.890496
+Final model saved in file: log/model.ckpt
